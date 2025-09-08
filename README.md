@@ -11,7 +11,7 @@ The tool sends protocol-appropriate requests (like `HEAD` with `Host` headers fo
 
 - Sends proper `Host` headers for HTTP/HTTPS
 
-- Works across multiple ports (HTTP, HTTPS, FTP, SSH, SMTP, custom services, etc.)
+- Can attempt banner grabs across multiple ports (HTTP, HTTPS, FTP, SSH, SMTP, and custom services).
 
 - Timeout handling for dead or filtered ports
 
