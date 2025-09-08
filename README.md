@@ -16,3 +16,20 @@ The tool sends protocol-appropriate requests (like `HEAD` with `Host` headers fo
 - Timeout handling for dead or filtered ports
 
 - Installer and uninstaller scripts for easy setup and removal
+
+  ## Installation
+
+1. **Clone the repository:**
+```bash
+git clone https://github.com/s-r-e-e-r-a-j/BannerHunter.git
+```
+2. **Navigate to the project directory:**
+```bash
+cd BannerHunter
+```
+3. **Run the installer to install dependencies and setup the system-wide command:**
+```bash
+sudo bash install.sh
+```
+The installer will check for required dependencies and install them if missing.
+
