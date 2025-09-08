@@ -87,7 +87,7 @@ else
 fi
 
 # Check if gcc is available
-if ! command -v gcc >/dev/null 2>&1; then
+if ! command -v clang >/dev/null 2>&1; then
     echo "[!] gcc not found. Make sure it is installed and in PATH."
     exit 1
 fi
