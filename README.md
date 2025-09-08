@@ -58,3 +58,6 @@ Connects to `example.com` on ports `21`, `22`, `25`, `80`, and `443`, grabbing b
 sudo bash uninstall.sh
 ```
 This will remove the bannerhunter command from your system(Termux & Linux).
+
+## License
+This project is licensed under the MIT License
