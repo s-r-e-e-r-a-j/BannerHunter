@@ -27,7 +27,7 @@ git clone https://github.com/s-r-e-e-r-a-j/BannerHunter.git
 ```bash
 cd BannerHunter
 ```
-3. **Run the installer to install dependencies and setup the system-wide command:**
+3. **Run the installer to install dependencies and setup the system-wide command (Linux & Termux):**
 ```bash
 sudo bash install.sh
 ```
