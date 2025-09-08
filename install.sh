@@ -86,10 +86,17 @@ else
     install_termux_packages
 fi
 
-# Check if gcc is available
-if ! command -v clang >/dev/null 2>&1; then
-    echo "[!] gcc not found. Make sure it is installed and in PATH."
-    exit 1
+if [[ "$ENV" == "termux" ]]; then
+   # Check if clang is available
+   if ! command -v clang >/dev/null 2>&1; then
+       echo "[!] clang not found. Make sure it is installed and in PATH."
+       exit 1
+   fi
+else
+     # check if gcc is available 
+     if ! command -v gcc >/dev/null 2>&1; then
+          echo "[!] gcc not found. Make sure it is installed and in PATH."
+          exit 1
 fi
 
 # Check source file
