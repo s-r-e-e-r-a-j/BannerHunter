@@ -13,7 +13,7 @@ The tool sends protocol-appropriate requests (like `HEAD` with `Host` headers fo
 
 - Can attempt banner grabs across multiple ports (HTTP, HTTPS, FTP, SSH, SMTP, and custom services).
 
-- Timeout handling for dead or filtered ports
+- Receive timeout handling to prevent hangs when services don’t respond
 
 - Installer and uninstaller scripts for easy setup and removal
 
