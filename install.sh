@@ -100,7 +100,11 @@ fi
 
 # Build BannerHunter
 echo "[*] Building $TOOL_NAME..."
-gcc "$SRC_FILE" -o "$INSTALL_DIR/$BIN_FILE" -lssl -lcrypto
+if [[ "$ENV" == "termux" ]]; then
+     clang "$SRC_FILE" -o "$INSTALL_DIR/$BIN_FILE" -lssl -lcrypto
+else      
+     gcc "$SRC_FILE" -o "$INSTALL_DIR/$BIN_FILE" -lssl -lcrypto
+fi
 
 # Check build success
 if [[ -f "$INSTALL_DIR/$BIN_FILE" ]]; then
