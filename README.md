@@ -17,6 +17,10 @@ The tool sends protocol-appropriate requests (like `HEAD` with `Host` headers fo
 
 - Installer and uninstaller scripts for easy setup and removal
 
+## Disclaimer 
+BannerHunter is for educational and authorized security testing only. 
+Do not use it on systems without permission. The author is not responsible for misuse.
+
   ## Installation
 
 1. **Clone the repository:**
