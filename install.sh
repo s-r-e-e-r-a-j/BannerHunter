@@ -22,7 +22,7 @@ echo "[*] Install directory: $INSTALL_DIR"
 
 # Dependencies
 DEPENDENCIES_LINUX=("gcc" "make" "openssl" "libssl-dev")
-DEPENDENCIES_TERMUX=("clang" "make" "openssl" "openssl-dev")
+DEPENDENCIES_TERMUX=("clang" "make" "openssl")
 
 install_linux_packages() {
     PM=""
