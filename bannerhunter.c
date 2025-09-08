@@ -1,3 +1,6 @@
+// Developer: Sreeraj
+// GitHub: https://github.com/s-r-e-e-r-a-j
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,6 +55,55 @@ int tcp_connect(char *host, int port) {
     return sock;
 }
 
+// Send HTTP HEAD request with HTTP/1.1 -> fallback HTTP/1.0
+int send_http_head(int sock, SSL *ssl, char *host, int use_ssl) {
+    char buffer[BUFFER_SIZE];
+    char request[512];
+    int bytes;
+
+    // Try HTTP/1.1 first
+    snprintf(request, sizeof(request),
+             "HEAD / HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n", host);
+
+    if (use_ssl)
+        SSL_write(ssl, request, strlen(request));
+    else
+        send(sock, request, strlen(request), 0);
+
+    if (use_ssl)
+        bytes = SSL_read(ssl, buffer, sizeof(buffer)-1);
+    else
+        bytes = recv(sock, buffer, sizeof(buffer)-1, 0);
+
+    if (bytes > 0) {
+        buffer[bytes] = '\0';
+        printf("[+] Banner (HTTP/1.1):\n%s\n", buffer);
+        return 1; // success
+    }
+
+    // Fallback to HTTP/1.0
+    snprintf(request, sizeof(request),
+             "HEAD / HTTP/1.0\r\nHost: %s\r\n\r\n", host);
+
+    if (use_ssl)
+        SSL_write(ssl, request, strlen(request));
+    else
+        send(sock, request, strlen(request), 0);
+
+    if (use_ssl)
+        bytes = SSL_read(ssl, buffer, sizeof(buffer)-1);
+    else
+        bytes = recv(sock, buffer, sizeof(buffer)-1, 0);
+
+    if (bytes > 0) {
+        buffer[bytes] = '\0';
+        printf("[+] Banner (HTTP/1.0 fallback):\n%s\n", buffer);
+        return 1;
+    }
+
+    return 0; // failed both
+}
+
 // Grab banner over plain TCP (send \r\n if needed)
 int grab_plain_tcp(int sock, char *host, int port) {
     char buffer[BUFFER_SIZE];
@@ -64,13 +116,11 @@ int grab_plain_tcp(int sock, char *host, int port) {
         bytes = recv(sock, buffer, sizeof(buffer)-1, 0);
     }
 
-    // If HTTP port, send HEAD request with Host header
-    if (bytes <= 0 && (port == 80 || port == 8080 || port == 8000)) {
-        char http_request[512];
-        snprintf(http_request, sizeof(http_request),
-                 "HEAD / HTTP/1.0\r\nHost: %s\r\n\r\n", host);
-        send(sock, http_request, strlen(http_request), 0);
-        bytes = recv(sock, buffer, sizeof(buffer)-1, 0);
+    // If HTTP port, send HEAD request with version fallback
+    if (port == 80 || port == 8080 || port == 8000) {
+        if (send_http_head(sock, NULL, host, 0)) {
+            return 1;
+        }
     }
 
     if (bytes > 0) {
@@ -96,15 +146,17 @@ int grab_ssl(int sock, char *host, int port) {
     char buffer[BUFFER_SIZE];
     int bytes;
 
-    // If HTTPS, send HEAD request with Host header
+    // If HTTPS port, send HEAD request with version fallback
     if (port == 443 || port == 8443) {
-        char https_request[512];
-        snprintf(https_request, sizeof(https_request),
-                 "HEAD / HTTP/1.0\r\nHost: %s\r\n\r\n", host);
-        SSL_write(ssl, https_request, strlen(https_request));
+        if (send_http_head(sock, ssl, host, 1)) {
+            SSL_shutdown(ssl);
+            SSL_free(ssl);
+            SSL_CTX_free(ctx);
+            return 1;
+        }
     }
 
-    // Try reading banner
+    // Try reading any banner
     bytes = SSL_read(ssl, buffer, sizeof(buffer)-1);
     if (bytes > 0) {
         buffer[bytes] = '\0';
