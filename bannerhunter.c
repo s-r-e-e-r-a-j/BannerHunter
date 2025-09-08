@@ -97,7 +97,7 @@ int send_http_head(int sock, SSL *ssl, char *host, int use_ssl) {
 
     if (bytes > 0) {
         buffer[bytes] = '\0';
-        printf("[+] Banner (HTTP/1.0 fallback):\n%s\n", buffer);
+        printf("[+] Banner (HTTP/1.0):\n%s\n", buffer);
         return 1;
     }
 
