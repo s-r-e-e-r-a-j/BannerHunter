@@ -33,3 +33,22 @@ sudo bash install.sh
 ```
 The installer will check for required dependencies and install them if missing.
 
+## Usage
+```bash
+bannerhunter <host> <port>
+```
+```bash
+bannerhunter <host> <port1> <port2> <port3>
+```
+
+**Example (Single Port):**
+```bash
+bannerhunter example.com 80
+```
+Connects to `example.com` on port `80` and attempts to grab the banner.
+
+**Example (Multiple Ports):**
+```bash
+bannerhunter example.com 21 22 25 80 443
+```
+Connects to `example.com` on ports `21`, `22`, `25`, `80`, and `443`, grabbing banners from each service.
