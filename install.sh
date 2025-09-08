@@ -97,6 +97,7 @@ else
      if ! command -v gcc >/dev/null 2>&1; then
           echo "[!] gcc not found. Make sure it is installed and in PATH."
           exit 1
+     fi
 fi
 
 # Check source file
