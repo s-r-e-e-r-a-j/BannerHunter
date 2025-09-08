@@ -52,3 +52,9 @@ Connects to `example.com` on port `80` and attempts to grab the banner.
 bannerhunter example.com 21 22 25 80 443
 ```
 Connects to `example.com` on ports `21`, `22`, `25`, `80`, and `443`, grabbing banners from each service.
+
+## Uninstallation
+```bash
+sudo bash uninstall.sh
+```
+This will remove the bannerhunter command from your system(Termux & Linux).
