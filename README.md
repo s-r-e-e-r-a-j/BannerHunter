@@ -5,7 +5,7 @@ The tool sends protocol-appropriate requests (like `HEAD` with `Host` headers fo
 
 ## Features
 
-- Works on both **Linux**(Debian,RedHat,Arch) and **Termux**
+- Works on both **Linux**(Debian,RHEL,Arch) and **Termux**
 
 - Supports **plain TCP** and **SSL/TLS** connections
 
