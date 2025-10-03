@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Bannerhunter Uninstaller
 # Works on Linux and Termux
 set -e
