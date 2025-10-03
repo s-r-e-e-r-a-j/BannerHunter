@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # BannerHunter Installer Script
 # Works on Linux and Termux (Android)
 # Checks dependencies, installs missing packages, and builds BannerHunter
