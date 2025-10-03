@@ -1,8 +1,9 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
 # BannerHunter Installer Script
 # Works on Linux and Termux (Android)
 # Checks dependencies, installs missing packages, and builds BannerHunter
+
+set -euo pipefail
 
 TOOL_NAME="BannerHunter"
 SRC_FILE="bannerhunter.c"
@@ -20,39 +21,56 @@ fi
 echo "[*] Detected environment: $ENV"
 echo "[*] Install directory: $INSTALL_DIR"
 
-# Dependencies
-DEPENDENCIES_LINUX=("gcc" "openssl" "libssl-dev")
+# Termux deps
 DEPENDENCIES_TERMUX=("clang" "openssl")
 
-install_linux_packages() {
-    PM=""
+# Detect package manager on Linux
+detect_pm() {
     if command -v apt >/dev/null 2>&1; then
         PM="apt"
-        echo "[*] Using apt"
-        apt update -y
     elif command -v pacman >/dev/null 2>&1; then
         PM="pacman"
-        echo "[*] Using pacman"
-        pacman -Sy --noconfirm
     elif command -v dnf >/dev/null 2>&1; then
         PM="dnf"
-        echo "[*] Using dnf"
     elif command -v yum >/dev/null 2>&1; then
         PM="yum"
-        echo "[*] Using yum"
     else
-        echo "[!] No supported package manager found (apt, pacman, dnf, yum)"
+        echo "[!] No supported package manager found (apt, pacman, dnf, yum)."
         exit 1
     fi
+}
 
-    # Install only missing packages
-    for pkg in "${DEPENDENCIES_LINUX[@]}"; do
-        case $PM in
+install_linux_packages() {
+    detect_pm
+    echo "[*] Using package manager: $PM"
+
+    case "$PM" in
+        apt)
+            PACKAGES=("gcc" "libssl-dev")
+            apt update -y
+            ;;
+        pacman)
+            PACKAGES=("gcc" "openssl")
+            ;;
+        dnf)
+            PACKAGES=("gcc" "openssl-devel")
+            ;;
+        yum)
+            PACKAGES=("gcc" "openssl-devel")
+            ;;
+        *)
+            echo "[!] Unsupported package manager: $PM"
+            exit 1
+            ;;
+    esac
+
+    for pkg in "${PACKAGES[@]}"; do
+        case "$PM" in
             apt)
                 dpkg -s "$pkg" >/dev/null 2>&1 || apt install -y "$pkg"
                 ;;
             pacman)
-                pacman -Qi "$pkg" >/dev/null 2>&1 || pacman -S --noconfirm "$pkg"
+                pacman -Qi "$pkg" >/dev/null 2>&1 || pacman -Sy --noconfirm "$pkg"
                 ;;
             dnf)
                 rpm -q "$pkg" >/dev/null 2>&1 || dnf install -y "$pkg"
@@ -86,18 +104,17 @@ else
     install_termux_packages
 fi
 
+# Verify compiler presence
 if [[ "$ENV" == "termux" ]]; then
-   # Check if clang is available
-   if ! command -v clang >/dev/null 2>&1; then
-       echo "[!] clang not found. Make sure it is installed and in PATH."
-       exit 1
-   fi
+    if ! command -v clang >/dev/null 2>&1; then
+        echo "[!] clang not found. Make sure it is installed and in PATH."
+        exit 1
+    fi
 else
-     # check if gcc is available 
-     if ! command -v gcc >/dev/null 2>&1; then
-          echo "[!] gcc not found. Make sure it is installed and in PATH."
-          exit 1
-     fi
+    if ! command -v gcc >/dev/null 2>&1; then
+        echo "[!] gcc not found. Make sure it is installed and in PATH."
+        exit 1
+    fi
 fi
 
 # Check source file
@@ -109,9 +126,9 @@ fi
 # Build BannerHunter
 echo "[*] Building $TOOL_NAME..."
 if [[ "$ENV" == "termux" ]]; then
-     clang "$SRC_FILE" -o "$INSTALL_DIR/$BIN_FILE" -lssl -lcrypto
-else      
-     gcc "$SRC_FILE" -o "$INSTALL_DIR/$BIN_FILE" -lssl -lcrypto
+    clang "$SRC_FILE" -o "$INSTALL_DIR/$BIN_FILE" -lssl -lcrypto
+else
+    gcc "$SRC_FILE" -o "$INSTALL_DIR/$BIN_FILE" -lssl -lcrypto
 fi
 
 # Check build success
