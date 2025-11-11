@@ -47,17 +47,21 @@ install_linux_packages() {
 
     case "$PM" in
         apt)
-            PACKAGES=("gcc" "libssl-dev")
+            PACKAGES=("build-essential" "libssl-dev")
             apt update -y
             ;;
         pacman)
-            PACKAGES=("gcc" "openssl")
+            PACKAGES=("base-devel" "openssl")
             ;;
         dnf)
-            PACKAGES=("gcc" "openssl-devel")
+            echo "[*] Installing Development Tools group..."
+            dnf groupinstall "Development Tools" -y
+            PACKAGES=("openssl-devel")
             ;;
         yum)
-            PACKAGES=("gcc" "openssl-devel")
+            echo "[*] Installing Development Tools group..."
+            yum groupinstall "Development Tools" -y
+            PACKAGES=("openssl-devel")
             ;;
         *)
             echo "[!] Unsupported package manager: $PM"
